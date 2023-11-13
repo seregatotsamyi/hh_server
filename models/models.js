@@ -207,6 +207,19 @@ const Genders = sequelize.define("genders", {
     }
 })
 
+const Educations = sequelize.define("educations", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+    },
+    education_value: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    }
+})
+
 
 Employers.belongsTo(Address, {foreignKey: "address_id"})
 Address.hasOne(Employers, {foreignKey: "address_id"})
@@ -220,13 +233,16 @@ Streets.belongsTo(StreetsTypes , {foreignKey: "street_type"})
 Streets.hasMany(Address, {foreignKey: 'street_id'})
 Address.belongsTo(Streets , {foreignKey: "street_id"})
 
-SettlementsTypes.hasMany(Settlements, {foreignKey: 'settlements_type'} )
+SettlementsTypes.hasMany(Settlements, {foreignKey: 'settlement_type'} )
 
-Settlements.hasMany(Address, {foreignKey: 'settlements_id'})
-Address.belongsTo(Settlements , {foreignKey: "settlements_id"})
+Settlements.hasMany(Address, {foreignKey: 'settlement_id'})
+Address.belongsTo(Settlements , {foreignKey: "settlement_id"})
 
-Genders.hasMany(Vacancies, {foreignKey: "genders_id"})
-Vacancies.belongsTo(Genders,{foreignKey: "genders_id"})
+Genders.hasMany(Vacancies, {foreignKey: "gender_id"})
+Vacancies.belongsTo(Genders,{foreignKey: "gender_id"})
+
+Educations.hasMany(Vacancies, {foreignKey: "education_id"})
+Vacancies.belongsTo(Educations,{foreignKey: "education_id"})
 
 module.exports = {
     Employers,
