@@ -148,7 +148,7 @@ const Applicants = sequelize.define('applicants', {
         allowNull: false,
     },
     phone: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
         allowNull: false,
     },

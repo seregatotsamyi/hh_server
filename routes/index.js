@@ -5,9 +5,10 @@ const applicantRouter = require('./applicantRouter')
 
 const router = new Router()
 
+router.use('/applicant', applicantRouter)
 router.use('/employer', employerRouter)
 router.use('/address', addressRouter)
-router.use('/applicant', applicantRouter)
+
 
 
 module.exports = router
