@@ -6,6 +6,6 @@ const router = new Router()
 router.post('/registration', applicantController.registration)
 router.post('/login', applicantController.login)
 router.get('/auth', authMiddleware, applicantController.check)
-router.get('/:id' , applicantController.get)
+router.get('/:id', applicantController.get)
 
 module.exports = router

@@ -11,7 +11,7 @@ const generateJwt = (id, login, role) => {
 class ApplicantController {
 
     async login(req, res, next) {
-        const {login, password} = req.body
+        const {login, password, role} = req.body
         const applicant = await Applicants.findOne({where: {login}})
         if (!applicant){
             return next(ApiError.internal("Пользователь с таким именем не найден"))
@@ -22,14 +22,18 @@ class ApplicantController {
             return next(ApiError.internal("Указан неверный пароль"))
         }
 
-        const token = generateJwt(applicant.id, applicant.login, applicant.role)
+        const token = generateJwt(applicant.id, applicant.login, role)
         return res.status(200).json({token})
     }
 
     async registration(req, res, next) {
-        const {login, first_name, second_name, surname, password, phone, email, role} = req.body
+        let {login, first_name, second_name, surname, password, phone, email , role} = req.body
+
         if (!login || !password){
             return next(ApiError.badRequest("Некорректный login или [password]"))
+        }
+        if (!email) {
+            email = null
         }
 
         const candidate = await Applicants.findOne({where: {
@@ -55,6 +59,11 @@ class ApplicantController {
         }
     }
 
+    async check(req, res, next) {
+        const token = generateJwt(req.user.id, req.user.login, req.user.role)
+        return res.json({token})
+    }
+
     async get(req, res, next) {
         const {id} = req.params
         if (!id) {
@@ -71,10 +80,7 @@ class ApplicantController {
         }
     }
 
-    async check(req, res) {
-        const token = generateJwt(req.user.id, req.user.login, req.user.role)
-        return res.json({token})
-    }
+
 }
 
 module.exports = new ApplicantController()
