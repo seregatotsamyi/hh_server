@@ -18,6 +18,8 @@ const Streets = sequelize.define('streets', {
         allowNull: false,
         unique: true
     }
+},  {
+    timestamps: false
 })
 
 const StreetsTypes = sequelize.define('streets_types', {
@@ -33,7 +35,7 @@ const StreetsTypes = sequelize.define('streets_types', {
         allowNull: false,
         unique: true
     }
-})
+},  {timestamps: false})
 
 const Settlements = sequelize.define('settlements', {
     id: {
@@ -48,7 +50,7 @@ const Settlements = sequelize.define('settlements', {
         allowNull: false,
         unique: true
     }
-})
+},  {timestamps: false})
 
 const SettlementsTypes = sequelize.define('settlements_types', {
     id: {
@@ -63,7 +65,7 @@ const SettlementsTypes = sequelize.define('settlements_types', {
         allowNull: false,
         unique: true
     }
-})
+},  {timestamps: false})
 
 const Employers = sequelize.define('employers', {
     id: {
@@ -84,7 +86,7 @@ const Employers = sequelize.define('employers', {
         allowNull: false,
     },
     phone: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
         allowNull: false,
     },
