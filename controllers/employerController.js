@@ -1,12 +1,12 @@
 const ApiError = require('../error/ApiError')
-const {Employers, Address, Streets, Settlements} = require("../models/models");
+const {Employers, Address, Streets, Settlements, Applicants} = require("../models/models");
 const {Op} = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
 const generateJwt = (id, login, role) => {
-    return  jwt.sign({id, login, role}, process.env.SECRET_KEY, {expiresIn: '24h'})
+    return jwt.sign({id, login, role}, process.env.SECRET_KEY, {expiresIn: '24h'})
 }
 
 class EmployerController {
@@ -65,12 +65,27 @@ class EmployerController {
     }
 
     async login(req, res, next) {
+        const {login, password, role} = req.body
+        const employer = await Employers.findOne({where: {login}})
+        if (!employer) {
+            return next(ApiError.internal("Пользователь с таким именем не найден"))
+        }
+        let comparePassword = bcrypt.compareSync(password, employer.password)
 
+        if (!comparePassword) {
+            return next(ApiError.internal("Указан неверный пароль"))
+        }
+
+        const token = generateJwt(employer.id, employer.login, role)
+        return res.status(200).json({token})
     }
 
-    async check(req, res) {
-        res.json({message: "check"})
+
+    async check(req, res, next) {
+        const token = generateJwt(req.user.id, req.user.login, req.user.role)
+        return res.json({token})
     }
+
 
     async get(req, res, next) {
         const {id} = req.query
