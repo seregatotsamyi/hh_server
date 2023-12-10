@@ -88,11 +88,42 @@ class EmployerController {
 
 
     async get(req, res, next) {
-        const {id} = req.query
+        const {id} = req.params
         if (!id) {
             return next(ApiError.badRequest("Не указан ID"))
         }
-        res.json(id)
+        try {
+            const employer = await Employers.findOne({
+                where: {id}
+            })
+
+            res.json(employer)
+        } catch (e){
+            return next(ApiError.badRequest(e))
+        }
+    }
+
+    async update(req, res, next){
+        const {login, id, email, name, phone, short_name} = req.body
+
+        if (!id){
+            return next(ApiError.badRequest("Нет id"))
+        }
+
+        try {
+            await Employers.update({login, email, name, phone, short_name}, {
+                where: {
+                    id
+                },
+            });
+            const employer = await Employers.findOne({where: {id}})
+            return res.json(employer)
+        }
+        catch (e){
+            return next(ApiError.badRequest(e))
+        }
+
+
     }
 }
 

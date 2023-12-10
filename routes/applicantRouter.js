@@ -5,6 +5,7 @@ const router = new Router()
 
 router.post('/registration', applicantController.registration)
 router.post('/login', applicantController.login)
+router.post('/update', applicantController.update)
 router.get('/auth', authMiddleware, applicantController.check)
 router.get('/:id', applicantController.get)
 
