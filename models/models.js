@@ -197,11 +197,11 @@ const Vacancies = sequelize.define('vacancies', {
         allowNull: false,
     },
     start_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     end_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
 
@@ -261,7 +261,7 @@ const Kind_activities = sequelize.define("kind_activities", {
         type: DataTypes.STRING,
         allowNull: false,
     }
-})
+}, {timestamps: false})
 
 const Activities_vacancies = sequelize.define('activities_vacancies', {
     id: {
@@ -271,23 +271,23 @@ const Activities_vacancies = sequelize.define('activities_vacancies', {
         allowNull: false,
         unique: true
     },
-    vacancy_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Vacancies,
-            key: 'id',
-            unique: false
-        }
-    },
-    activity_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Kind_activities,
-            key: 'id',
-            unique: false
-        }
-    }
-});
+    // vacancy_id: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: Vacancies,
+    //         key: 'id',
+    //         unique: false
+    //     }
+    // },
+    // activity_id: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: Kind_activities,
+    //         key: 'id',
+    //         unique: false
+    //     }
+    // }
+}, {timestamps: false});
 
 const Duties = sequelize.define("duties", {
     id: {
@@ -301,7 +301,7 @@ const Duties = sequelize.define("duties", {
         type: DataTypes.STRING,
         allowNull: false,
     }
-})
+}, {timestamps: false})
 
 const Duties_vacancies = sequelize.define("duties_vacancies", {
     id: {
@@ -311,23 +311,23 @@ const Duties_vacancies = sequelize.define("duties_vacancies", {
         allowNull: false,
         unique: true
     },
-    vacancy_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Vacancies,
-            key: 'id',
-            unique: false
-        }
-    },
-    duties_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Duties,
-            key: 'id',
-            unique: false
-        }
-    }
-})
+    // vacancy_id: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: Vacancies,
+    //         key: 'id',
+    //         unique: false
+    //     }
+    // },
+    // duties_id: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: Duties,
+    //         key: 'id',
+    //         unique: false
+    //     }
+    // }
+}, {timestamps: false})
 
 
 Address.belongsTo(Employers, {foreignKey: "id"})
@@ -359,8 +359,15 @@ Responses.belongsTo(Applicants, {foreignKey: "applicant_id"})
 Vacancies.hasMany(Responses, {foreignKey: "vacancy_id"})
 Responses.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
-Kind_activities.belongsToMany(Vacancies, {through: Activities_vacancies, foreignKey: 'activity_id'});
-Vacancies.belongsToMany(Kind_activities, {through: Activities_vacancies, foreignKey: 'vacancy_id'});
+Kind_activities.hasMany(Activities_vacancies, {foreignKey: "activity_id"})
+Activities_vacancies.belongsTo(Kind_activities, {foreignKey: "activity_id"})
+
+//Kind_activities.belongsToMany(Vacancies, {through: Activities_vacancies, foreignKey: 'activity_id'});
+
+Vacancies.hasMany(Activities_vacancies, {foreignKey: "vacancy_id"})
+Activities_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+
+//Vacancies.belongsToMany(Kind_activities, {through: Activities_vacancies, foreignKey: 'vacancy_id'});
 
 Duties.belongsToMany(Vacancies, {through: Duties_vacancies, foreignKey: 'duties_id'});
 Vacancies.belongsToMany(Duties, {through: Duties_vacancies, foreignKey: 'vacancy_id'});
@@ -379,5 +386,7 @@ module.exports = {
     Educations,
     Responses,
     Kind_activities,
-    Duties
+    Duties,
+    Activities_vacancies,
+    Duties_vacancies
 }
