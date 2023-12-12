@@ -49,6 +49,19 @@ class VacancyController {
             kind_activities_array
         } = req.body
 
+        let dateStart = new Date(start_date)
+        let date = new Date()
+        const year = date.getFullYear()
+        const day = date.getDate()
+        const month = date.getMonth()
+        let dateNow = new Date(Date.UTC(year, month, day))
+        dateNow.setDate(day)
+
+        if (dateStart < dateNow) {
+            return next(ApiError.badRequest("Ошибка в дате"))
+        }
+
+
         if (age_lower > age_upper || payment_lower > payment_upper) {
             return next(ApiError.badRequest("Плохая граница возраста или оплаты"))
         }
@@ -80,6 +93,7 @@ class VacancyController {
                 })
             }
 
+
             const activitiesVacanciesTable = await Activities_vacancies.bulkCreate(activities_kind)
 
             let duties = []
@@ -92,7 +106,6 @@ class VacancyController {
             }
 
             const dutiesTable = await Duties_vacancies.bulkCreate(duties)
-
 
             res.json(vacancy)
 
