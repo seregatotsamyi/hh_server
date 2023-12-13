@@ -3,8 +3,6 @@ const sequelize = require('../config/db')
 const {DataTypes} = require('sequelize')
 
 
-
-
 const Streets = sequelize.define('streets', {
     id: {
         type: DataTypes.INTEGER,
@@ -18,7 +16,7 @@ const Streets = sequelize.define('streets', {
         allowNull: false,
         unique: true
     }
-},  {
+}, {
     timestamps: false
 })
 
@@ -35,7 +33,7 @@ const StreetsTypes = sequelize.define('streets_types', {
         allowNull: false,
         unique: true
     }
-},  {timestamps: false})
+}, {timestamps: false})
 
 const Settlements = sequelize.define('settlements', {
     id: {
@@ -50,7 +48,7 @@ const Settlements = sequelize.define('settlements', {
         allowNull: false,
         unique: true
     }
-},  {timestamps: false})
+}, {timestamps: false})
 
 const SettlementsTypes = sequelize.define('settlements_types', {
     id: {
@@ -65,7 +63,7 @@ const SettlementsTypes = sequelize.define('settlements_types', {
         allowNull: false,
         unique: true
     }
-},  {timestamps: false})
+}, {timestamps: false})
 
 const Employers = sequelize.define('employers', {
     id: {
@@ -219,6 +217,8 @@ const Genders = sequelize.define("genders", {
         type: DataTypes.STRING,
         allowNull: false,
     }
+}, {
+    timestamps: false
 })
 
 const Responses = sequelize.define("responses", {
@@ -247,6 +247,8 @@ const Educations = sequelize.define("educations", {
         type: DataTypes.STRING,
         allowNull: false,
     }
+}, {
+    timestamps: false
 })
 
 const Kind_activities = sequelize.define("kind_activities", {
@@ -271,22 +273,7 @@ const Activities_vacancies = sequelize.define('activities_vacancies', {
         allowNull: false,
         unique: true
     },
-    // vacancy_id: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: Vacancies,
-    //         key: 'id',
-    //         unique: false
-    //     }
-    // },
-    // activity_id: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: Kind_activities,
-    //         key: 'id',
-    //         unique: false
-    //     }
-    // }
+
 }, {timestamps: false});
 
 const Duties = sequelize.define("duties", {
@@ -311,22 +298,7 @@ const Duties_vacancies = sequelize.define("duties_vacancies", {
         allowNull: false,
         unique: true
     },
-    // vacancy_id: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: Vacancies,
-    //         key: 'id',
-    //         unique: false
-    //     }
-    // },
-    // duties_id: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: Duties,
-    //         key: 'id',
-    //         unique: false
-    //     }
-    // }
+
 }, {timestamps: false})
 
 
