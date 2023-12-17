@@ -4,7 +4,9 @@ const vacancyController = require('./../controllers/vacancyController')
 const router = new Router()
 
 router.post('/create', vacancyController.create)
-router.get('', vacancyController.get)
-router.get('/:empId', vacancyController.get)
+router.get('/count', vacancyController.count)
+router.get('/count/:empId', vacancyController.count)
+router.get('/', vacancyController.get)
+router.get('/item/:id', vacancyController.getItem)
 
 module.exports = router

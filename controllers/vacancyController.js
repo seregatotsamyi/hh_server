@@ -1,9 +1,18 @@
-const {Vacancies, Activities_vacancies, Duties_vacancies} = require("../models/models");
+const {
+    Vacancies,
+    Activities_vacancies,
+    Duties_vacancies,
+    Genders,
+    Employers,
+    Address,
+    Settlements,
+    Educations, Duties, Kind_activities
+} = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class VacancyController {
 
-    async get(req, res, next) {
+    async count(req, res, next) {
 
         const {empId} = req.params
 
@@ -110,13 +119,215 @@ class VacancyController {
             res.json(vacancy)
 
         } catch (e) {
-            console.log(e)
             return next(ApiError.badRequest(e))
         }
 
 
     }
 
+    async get(req, res, next) {
+        let {page, count, id} = req.query
+        const countPage = count
+        const offsetNumber = page * countPage - countPage
+
+        if (id) {
+
+            try {
+
+                const {count, rows} = await Vacancies.findAndCountAll({
+                    include: [
+                        {
+                            model: Employers,
+                            attributes: ['name', 'id'],
+                            include: [
+                                {
+                                    model: Address,
+                                    attributes: ['id'],
+                                    include: [
+                                        {
+                                            model: Settlements,
+                                            attributes: ['settlement'],
+                                        }
+                                    ],
+                                }
+                            ],
+                        }
+                    ],
+                    where: {
+                        employer_id: id
+                    },
+                    offset: offsetNumber,
+                    limit: countPage
+                });
+
+                let date = new Date()
+                const year = date.getFullYear()
+                const day = date.getDate()
+                const month = date.getMonth()
+                let dateNow = new Date(Date.UTC(year, month, day))
+
+                for (let i = 0; i < rows.length; i++) {
+                    let dateEnd = new Date(rows[i].end_date)
+                    if (dateEnd < dateNow) {
+                        rows[i].setDataValue("status", true)
+                    } else {
+                        rows[i].setDataValue("status", false)
+                    }
+                }
+
+                let resultObj = {
+                    "totalCount": count,
+                    "vacanceis": rows
+                }
+
+                return res.json(resultObj)
+
+            } catch (e) {
+                return next(ApiError.badRequest(e))
+            }
+
+        } else {
+
+            try {
+                const {count, rows} = await Vacancies.findAndCountAll({
+                    include: [
+                        {
+                            model: Employers,
+                            attributes: ['name', 'id'],
+                            include: [
+                                {
+                                    model: Address,
+                                    attributes: ['id'],
+                                    include: [
+                                        {
+                                            model: Settlements,
+                                            attributes: ['settlement'],
+                                        }
+                                    ],
+                                }
+                            ],
+                        }
+                    ],
+                    offset: offsetNumber,
+                    limit: countPage
+                });
+
+                let date = new Date()
+                const year = date.getFullYear()
+                const day = date.getDate()
+                const month = date.getMonth()
+                let dateNow = new Date(Date.UTC(year, month, day))
+
+                for (let i = 0; i < rows.length; i++) {
+                    let dateEnd = new Date(rows[i].end_date)
+                    if (dateEnd < dateNow) {
+                        rows[i].setDataValue("status", true)
+                    } else {
+                        rows[i].setDataValue("status", false)
+                    }
+
+
+                }
+
+                let resultObj = {
+                    "totalCount": count,
+                    "vacanceis": rows
+                }
+
+
+                return res.json(resultObj)
+
+            } catch (e) {
+                return next(ApiError.badRequest(e))
+            }
+
+        }
+
+
+    }
+
+    async getItem(req, res, next) {
+        const {id} = req.params
+
+
+        if (id) {
+
+            try {
+
+                const vacancy = await Vacancies.findByPk(id, {
+                    include: [
+                        {
+                            model: Employers,
+                            attributes: ['name', 'id'],
+                            include: [
+                                {
+                                    model: Address,
+                                    attributes: ['id'],
+                                    include: [
+                                        {
+                                            model: Settlements,
+                                            attributes: ['settlement'],
+                                        }
+                                    ],
+                                }
+                            ],
+                        },
+                        {
+                            model: Genders,
+                        },
+                        {
+                            model: Educations
+                        },
+                    ],
+                });
+                let date = new Date()
+                const year = date.getFullYear()
+                const day = date.getDate()
+                const month = date.getMonth()
+                let dateNow = new Date(Date.UTC(year, month, day))
+                let dateEnd = new Date(vacancy.end_date)
+                if (dateEnd < dateNow) {
+                    vacancy.setDataValue("status", true)
+                } else {
+                    vacancy.setDataValue("status", false)
+                }
+
+
+                const duties = await Duties_vacancies.findAll({
+                    where: {vacancy_id: id},
+                    include: Duties
+                })
+                const activities = await Activities_vacancies.findAll({
+                    where: {vacancy_id: id},
+                    include: Kind_activities
+                })
+
+
+                if (vacancy === null) {
+                    return next(ApiError.badRequest("Отсутствует id"))
+                } else {
+
+
+                    let data = vacancy.toJSON();
+                    data["activities"] = activities.map((item) => {
+                        return item.kind_activity.name
+                    })
+                    data["duties"] = duties.map((item) => {
+                        return item.duty.duties_volume
+                    })
+                    return res.json(data)
+                }
+
+
+            } catch (e) {
+                return next(ApiError.badRequest(e))
+            }
+
+        }
+
+        return next(ApiError.badRequest("Отсутствует id"))
+
+    }
 
 }
 

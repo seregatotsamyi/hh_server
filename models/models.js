@@ -194,6 +194,10 @@ const Vacancies = sequelize.define('vacancies', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
+    communication_skills: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
     start_date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
@@ -334,15 +338,16 @@ Responses.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 Kind_activities.hasMany(Activities_vacancies, {foreignKey: "activity_id"})
 Activities_vacancies.belongsTo(Kind_activities, {foreignKey: "activity_id"})
 
-//Kind_activities.belongsToMany(Vacancies, {through: Activities_vacancies, foreignKey: 'activity_id'});
-
 Vacancies.hasMany(Activities_vacancies, {foreignKey: "vacancy_id"})
 Activities_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
-//Vacancies.belongsToMany(Kind_activities, {through: Activities_vacancies, foreignKey: 'vacancy_id'});
+Duties.hasMany(Duties_vacancies, {foreignKey: "duties_id"})
+Duties_vacancies.belongsTo(Duties, {foreignKey: "duties_id"})
 
-Duties.belongsToMany(Vacancies, {through: Duties_vacancies, foreignKey: 'duties_id'});
-Vacancies.belongsToMany(Duties, {through: Duties_vacancies, foreignKey: 'vacancy_id'});
+Vacancies.hasMany(Duties_vacancies, {foreignKey: "vacancy_id"})
+Duties_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+
+
 
 
 module.exports = {
