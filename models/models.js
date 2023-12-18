@@ -74,32 +74,32 @@ const Employers = sequelize.define('employers', {
 
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(128),
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         unique: true,
         allowNull: false,
     },
     phone: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING(32),
         unique: true,
         allowNull: false,
     },
     login: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         unique: true,
         allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
     },
     short_name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(128)
     }
-})
+}, {timestamps: false,})
 
 const Address = sequelize.define('address', {
     id: {
@@ -345,8 +345,6 @@ Duties_vacancies.belongsTo(Duties, {foreignKey: "duties_id"})
 
 Vacancies.hasMany(Duties_vacancies, {foreignKey: "vacancy_id"})
 Duties_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
-
-
 
 
 module.exports = {
