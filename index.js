@@ -6,7 +6,6 @@ const cors = require('cors')
 const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandingMiddleware')
 const path = require('path')
-const {Employers, Vacancies} = require("./models/models");
 
 const PORT = process.env.PORT
 

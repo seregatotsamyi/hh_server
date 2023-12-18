@@ -9,6 +9,9 @@ const {
     Educations, Duties, Kind_activities
 } = require("../models/models");
 const ApiError = require("../error/ApiError");
+const sequelize = require("sequelize");
+const sequelizeD = require('../config/db')
+const {Op, Sequelize} = require("sequelize");
 
 class VacancyController {
 
@@ -329,6 +332,195 @@ class VacancyController {
 
     }
 
+    async getPost(req, res, next) {
+
+        let {stroke} = req.params
+        stroke = stroke.toLowerCase()
+        if (!stroke) {
+            return res.json("Нет параметра для поиска")
+        }
+
+        try {
+
+            const data = await Vacancies.findAll({
+                where: {
+                    name: sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + stroke + '%')
+                },
+                attributes: ["id", "name"],
+
+            })
+
+            res.json(data)
+        } catch (e) {
+            return next(ApiError.badRequest(e))
+        }
+    }
+
+    async reportOne(req, res, next) {
+        let {post, date_start, date_end} = req.query
+
+        if (!post || !date_start || !date_end) {
+            return res.json("Нет параметра для поиска")
+        }
+
+        post = post.toLowerCase()
+        let dateStart = new Date(date_start)
+        let dateEnd = new Date(date_end)
+
+        try {
+            const vacancyList = await Vacancies.findAll({
+                attributes: [
+                    [sequelize.fn('DISTINCT', sequelize.col('employer_id')), 'employer_id'],
+                    "id"
+                ],
+                where: {
+                    name: sequelize.where(sequelize.fn('LOWER', sequelize.col('vacancies.name')), 'LIKE', '%' + post + '%'),
+                    start_date: {
+                        [Op.and]: [
+                            {
+                                [Op.gte]: dateStart
+                            }
+                        ]
+                    },
+                    end_date: {
+                        [Op.and]: [
+                            {
+                                [Op.lte]: dateEnd
+                            }
+                        ]
+                    }
+                },
+
+            })
+            let empIdArray = []
+            vacancyList.map((item) => {
+                empIdArray.push(item.getDataValue("employer_id"))
+            })
+            if (empIdArray.length === 0){
+                res.json(vacancyList)
+            }
+            let employmentList = await Employers.findAll({
+                attributes: ['name', 'id'],
+                where: {
+                    id: {
+                        [Op.or]: empIdArray
+                    }
+                },
+                include: [
+                    {
+                        model: Address,
+                        attributes: ['id'],
+                        include: [
+                            {
+                                model: Settlements,
+                                attributes: ['settlement'],
+                            }
+                        ],
+                    }
+                ],
+            })
+
+
+            // const response = await sequelizeD.query(`SELECT DISTINCT vacancies.employer_id, employers.name, vacancies.id, settlements.settlement from vacancies INNER JOIN employers ON employers.id=vacancies.employer_id JOIN address ON address.id=employers.id JOIN settlements ON address.settlement_id = settlements.id WHERE LOWER(vacancies.name) LIKE '%${post}%' AND (vacancies.start_date <= '2023-12-22') AND (vacancies.end_date  >= '2023-12-22')`,
+            //     { type: sequelize.QueryTypes.SELECT })
+            res.json(employmentList)
+        } catch (e) {
+            return next(ApiError.badRequest(e))
+        }
+
+
+    }
+
+    async reportTwo(req, res, next) {
+        let {date_start, date_end} = req.query
+
+        if (!date_start || !date_end) {
+            return res.json("Нет параметра для поиска")
+        }
+
+        try {
+
+             const response = await sequelizeD.query(`SELECT vacancies.name, COUNT(vacancies.name) FROM vacancies WHERE (vacancies.start_date <= '${date_end}') AND (vacancies.end_date  >= '${date_end}') GROUP BY vacancies.name ORDER BY COUNT(vacancies.name) DESC LIMIT 1`,
+                 { type: sequelize.QueryTypes.SELECT })
+
+            res.json(response)
+        } catch (e) {
+            return next(ApiError.badRequest(e))
+        }
+
+
+    }
+
+    async reportThree(req, res, next) {
+        let { date_start, date_end} = req.query
+
+        if (!date_start || !date_end) {
+            return res.json("Нет параметра для поиска")
+        }
+
+        let dateStart = new Date(date_start)
+        let dateEnd = new Date(date_end)
+
+        try {
+            const vacancyList = await Vacancies.findAll({
+                attributes: [
+                    [sequelize.fn('DISTINCT', sequelize.col('employer_id')), 'employer_id'],
+                    "id",
+                ],
+                where: {
+                    education_id: 5,
+                    start_date: {
+                        [Op.and]: [
+                            {
+                                [Op.gte]: dateStart
+                            }
+                        ]
+                    },
+                    end_date: {
+                        [Op.and]: [
+                            {
+                                [Op.lte]: dateEnd
+                            }
+                        ]
+                    }
+                },
+
+            })
+            let empIdArray = []
+            vacancyList.map((item) => {
+                empIdArray.push(item.getDataValue("employer_id"))
+            })
+            if (empIdArray.length === 0){
+                res.json(vacancyList)
+            }
+            let employmentList = await Employers.findAll({
+                attributes: ['name', 'id'],
+                where: {
+                    id: {
+                        [Op.or]: empIdArray
+                    }
+                },
+                include: [
+                    {
+                        model: Address,
+                        attributes: ['id'],
+                        include: [
+                            {
+                                model: Settlements,
+                                attributes: ['settlement'],
+                            }
+                        ],
+                    }
+                ],
+            })
+
+            res.json(employmentList)
+        } catch (e) {
+            return next(ApiError.badRequest(e))
+        }
+
+
+    }
 }
 
 module.exports = new VacancyController()
