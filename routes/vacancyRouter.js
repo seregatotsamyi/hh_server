@@ -13,5 +13,6 @@ router.get('/post/', vacancyController.getPost)
 router.get('/reportOne/', vacancyController.reportOne)
 router.get('/reportTwo/', vacancyController.reportTwo)
 router.get('/reportThree/', vacancyController.reportThree)
+    //router.get('/added/', vacancyController.added)
 
 module.exports = router

@@ -6,7 +6,7 @@ const cors = require('cors')
 const router = require('./routes/index')
 const errorHandler = require('./middleware/ErrorHandingMiddleware')
 const path = require('path')
-const {Employers} = require("./models/models");
+const {Vacancies, Settlements, Address} = require("./models/models");
 
 const PORT = process.env.PORT
 
@@ -24,7 +24,7 @@ const start = async ()=>{
     try {
         await sequelize.authenticate()
         await sequelize.sync()
-       // await Employers.sync({alter:true})
+       // await Vacancies.sync({alter:true})
         app.listen(PORT, ()=> console.log(`Server started on port ${PORT}`))
     } catch (e){
         console.log(e)

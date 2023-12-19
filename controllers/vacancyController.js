@@ -6,12 +6,13 @@ const {
     Employers,
     Address,
     Settlements,
-    Educations, Duties, Kind_activities
+    Educations, Duties, Kind_activities, Applicants
 } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const sequelize = require("sequelize");
 const sequelizeD = require('../config/db')
 const {Op, Sequelize} = require("sequelize");
+const bcrypt = require("bcrypt");
 
 class VacancyController {
 
@@ -396,7 +397,7 @@ class VacancyController {
             vacancyList.map((item) => {
                 empIdArray.push(item.getDataValue("employer_id"))
             })
-            if (empIdArray.length === 0){
+            if (empIdArray.length === 0) {
                 res.json(vacancyList)
             }
             let employmentList = await Employers.findAll({
@@ -440,8 +441,13 @@ class VacancyController {
 
         try {
 
-             const response = await sequelizeD.query(`SELECT vacancies.name, COUNT(vacancies.name) FROM vacancies WHERE (vacancies.start_date <= '${date_end}') AND (vacancies.end_date  >= '${date_end}') GROUP BY vacancies.name ORDER BY COUNT(vacancies.name) DESC LIMIT 1`,
-                 { type: sequelize.QueryTypes.SELECT })
+            const response = await sequelizeD.query(`SELECT vacancies.name, COUNT(vacancies.name)
+                                                     FROM vacancies
+                                                     WHERE (vacancies.start_date >= '${date_start}')
+                                                       AND (vacancies.end_date <= '${date_end}')
+                                                     GROUP BY vacancies.name
+                                                     ORDER BY COUNT(vacancies.name) DESC LIMIT 1`,
+                {type: sequelize.QueryTypes.SELECT})
 
             res.json(response)
         } catch (e) {
@@ -452,7 +458,7 @@ class VacancyController {
     }
 
     async reportThree(req, res, next) {
-        let { date_start, date_end} = req.query
+        let {date_start, date_end} = req.query
 
         if (!date_start || !date_end) {
             return res.json("Нет параметра для поиска")
@@ -490,7 +496,7 @@ class VacancyController {
             vacancyList.map((item) => {
                 empIdArray.push(item.getDataValue("employer_id"))
             })
-            if (empIdArray.length === 0){
+            if (empIdArray.length === 0) {
                 res.json(vacancyList)
             }
             let employmentList = await Employers.findAll({
@@ -519,6 +525,71 @@ class VacancyController {
             return next(ApiError.badRequest(e))
         }
 
+
+    }
+
+    async added(req, res, next) {
+
+        try {
+
+            let array = []
+            // const password = "222"
+            // const hashPassword = await bcrypt.hash(password, 5)
+            // for (let i = 0; i < 100; i++) {
+            //     let number = i
+            //     let stroke = "0"
+            //     if (number < 10) {
+            //         number = number.toString()
+            //         stroke+=number
+            //     }
+            //     array[i] = {
+            //         login: `emp${i}`,
+            //         name: `"ООО Тест${i}"`,
+            //         short_name: null,
+            //         password: hashPassword,
+            //         phone: `+7 (922) 627-77-${number}`,
+            //         email: `test${i}@test.ru`,
+            //     }
+            // }
+            // settlements_id:,
+            // street_id:
+            // number_house: i,
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min) + min); // Максимум не включается, минимум включается
+            }
+            for (let i = 0; i < 100; i++){
+                array[i]={
+                    vacancy_id: i+3,
+                    duties_id: getRandomInt(1,23)
+                }
+            }
+                // for (let i = 0; i < 100; i++) {
+            //     array[i] = {
+            //         employer_id: getRandomInt(3,103),
+            //         name: `Тестовая ${i}`,
+            //         age_lower: getRandomInt(18,25),
+            //         age_upper: getRandomInt(25,45),
+            //         payment_lower: getRandomInt(20000,50000),
+            //         payment_upper: getRandomInt(50000,150000),
+            //         registration_work_book: getRandomInt(0,2),
+            //         availability_social_package: getRandomInt(0,2),
+            //         communication_skills: getRandomInt(0,2),
+            //         start_date: `2023-12-${getRandomInt(10,20)}`,
+            //         end_date: `2023-12-${getRandomInt(20,32)}`,
+            //         gender_id: getRandomInt(1,4),
+            //         education_id: getRandomInt(1,7)
+            //     }
+            // }
+
+            const response = await Duties_vacancies.bulkCreate(array)
+            res.json(response)
+
+        } catch (e) {
+            console.log(e)
+            return next(ApiError.badRequest(e))
+        }
 
     }
 }

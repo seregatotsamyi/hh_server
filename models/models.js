@@ -1,5 +1,5 @@
 const sequelize = require('../config/db')
-const {DataTypes} = require('sequelize')
+const {DataTypes, NumberDataTypeOptions} = require('sequelize')
 
 
 const Streets = sequelize.define('streets', {
@@ -11,7 +11,7 @@ const Streets = sequelize.define('streets', {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(32),
         allowNull: false,
         unique: true
     }
@@ -28,7 +28,7 @@ const StreetsTypes = sequelize.define('streets_types', {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(32),
         allowNull: false,
         unique: true
     }
@@ -43,9 +43,8 @@ const Settlements = sequelize.define('settlements', {
         unique: true
     },
     settlement: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
-        unique: true
     }
 }, {timestamps: false})
 
@@ -58,7 +57,7 @@ const SettlementsTypes = sequelize.define('settlements_types', {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(32),
         allowNull: false,
         unique: true
     }
@@ -93,7 +92,7 @@ const Employers = sequelize.define('employers', {
         allowNull: false,
     },
     password: {
-        type: DataTypes.STRING(64),
+        type: DataTypes.STRING(256),
         allowNull: false,
     },
     short_name: {
@@ -127,32 +126,32 @@ const Applicants = sequelize.define('applicants', {
         allowNull: false,
     },
     first_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
     },
     second_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
     },
     surname: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
     },
     login: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         unique: true,
         allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(256),
         allowNull: false,
     },
     phone: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING(32),
         unique: true,
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         unique: true,
     },
 })
@@ -166,15 +165,15 @@ const Vacancies = sequelize.define('vacancies', {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
     },
     age_upper: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER(),
         allowNull: false,
     },
     age_lower: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER(),
         allowNull: false,
     },
     payment_upper: {
@@ -206,7 +205,7 @@ const Vacancies = sequelize.define('vacancies', {
         allowNull: false,
     },
 
-})
+}, {timestamps: false})
 
 const Genders = sequelize.define("genders", {
     id: {
@@ -217,14 +216,14 @@ const Genders = sequelize.define("genders", {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(32),
         allowNull: false,
     }
 }, {
     timestamps: false
 })
 
-const Responses = sequelize.define("responses", {
+const Views = sequelize.define("views", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -232,8 +231,8 @@ const Responses = sequelize.define("responses", {
         allowNull: false,
         unique: true
     },
-    responses_date: {
-        type: DataTypes.DATE,
+    count_view: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     }
 })
@@ -247,8 +246,9 @@ const Educations = sequelize.define("educations", {
         unique: true
     },
     education_value: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(128),
         allowNull: false,
+        unique: true
     }
 }, {
     timestamps: false
@@ -263,8 +263,9 @@ const Kind_activities = sequelize.define("kind_activities", {
         unique: true
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(256),
         allowNull: false,
+        unique: true
     }
 }, {timestamps: false})
 
@@ -288,8 +289,9 @@ const Duties = sequelize.define("duties", {
         unique: true
     },
     duties_volume: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(256),
         allowNull: false,
+        unique: true
     }
 }, {timestamps: false})
 
@@ -328,11 +330,11 @@ Vacancies.belongsTo(Genders, {foreignKey: "gender_id"})
 Educations.hasMany(Vacancies, {foreignKey: "education_id"})
 Vacancies.belongsTo(Educations, {foreignKey: "education_id"})
 
-Applicants.hasMany(Responses, {foreignKey: "applicant_id"})
-Responses.belongsTo(Applicants, {foreignKey: "applicant_id"})
+Applicants.hasMany(Views, {foreignKey: "applicant_id"})
+Views.belongsTo(Applicants, {foreignKey: "applicant_id"})
 
-Vacancies.hasMany(Responses, {foreignKey: "vacancy_id"})
-Responses.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+Vacancies.hasMany(Views, {foreignKey: "vacancy_id"})
+Views.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
 Kind_activities.hasMany(Activities_vacancies, {foreignKey: "activity_id"})
 Activities_vacancies.belongsTo(Kind_activities, {foreignKey: "activity_id"})
@@ -358,7 +360,7 @@ module.exports = {
     Settlements,
     Genders,
     Educations,
-    Responses,
+    Views,
     Kind_activities,
     Duties,
     Activities_vacancies,
