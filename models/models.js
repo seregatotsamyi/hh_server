@@ -339,13 +339,13 @@ Views.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 Kind_activities.hasMany(Activities_vacancies, {foreignKey: "activity_id"})
 Activities_vacancies.belongsTo(Kind_activities, {foreignKey: "activity_id"})
 
-Vacancies.hasMany(Activities_vacancies, {foreignKey: "vacancy_id"})
+Vacancies.hasMany(Activities_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
 Activities_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
 Duties.hasMany(Duties_vacancies, {foreignKey: "duties_id"})
 Duties_vacancies.belongsTo(Duties, {foreignKey: "duties_id"})
 
-Vacancies.hasMany(Duties_vacancies, {foreignKey: "vacancy_id"})
+Vacancies.hasMany(Duties_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
 Duties_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
 

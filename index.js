@@ -25,8 +25,8 @@ const start = async ()=>{
         await sequelize.authenticate()
         await sequelize.sync()
         // await Vacancies.sync({alter:true})
-        // await Duties_vacancies.sync({alter:true})
-        // await Activities_vacancies.sync({alter:true})
+        //await Duties_vacancies.sync({alter:true})
+        //await Activities_vacancies.sync({alter:true})
         // await Views.sync({alter:true})
         app.listen(PORT, ()=> console.log(`Server started on port ${PORT}`))
     } catch (e){

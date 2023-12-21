@@ -333,6 +333,31 @@ class VacancyController {
 
     }
 
+    async deleteItem(req, res, next) {
+        const {id} = req.params
+
+        if (!id) {
+            return next(ApiError.badRequest("Отсутствует id"))
+        }
+
+        try {
+
+            const deleteItem = await Vacancies.destroy( {
+                where: {
+                    id: id
+                }
+            });
+
+            return res.json(deleteItem)
+
+        } catch (e) {
+            return next(ApiError.badRequest(e))
+        }
+
+
+
+    }
+
     async getPost(req, res, next) {
 
         let {stroke} = req.params
