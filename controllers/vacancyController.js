@@ -443,8 +443,8 @@ class VacancyController {
 
             const response = await sequelizeD.query(`SELECT vacancies.name, COUNT(vacancies.name)
                                                      FROM vacancies
-                                                     WHERE (vacancies.start_date >= '${date_start}')
-                                                       AND (vacancies.end_date <= '${date_end}')
+                                                     WHERE (vacancies.start_date <= '${date_start}')
+                                                       AND (vacancies.end_date >= '${date_end}')
                                                      GROUP BY vacancies.name
                                                      ORDER BY COUNT(vacancies.name) DESC LIMIT 1`,
                 {type: sequelize.QueryTypes.SELECT})
