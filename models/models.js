@@ -2,66 +2,6 @@ const sequelize = require('../config/db')
 const {DataTypes, NumberDataTypeOptions} = require('sequelize')
 
 
-const Streets = sequelize.define('streets', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true
-    },
-    name: {
-        type: DataTypes.STRING(32),
-        allowNull: false,
-        unique: true
-    }
-}, {
-    timestamps: false
-})
-
-const StreetsTypes = sequelize.define('streets_types', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true
-    },
-    name: {
-        type: DataTypes.STRING(32),
-        allowNull: false,
-        unique: true
-    }
-}, {timestamps: false})
-
-const Settlements = sequelize.define('settlements', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true
-    },
-    settlement: {
-        type: DataTypes.STRING(64),
-        allowNull: false,
-    }
-}, {timestamps: false})
-
-const SettlementsTypes = sequelize.define('settlements_types', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true
-    },
-    name: {
-        type: DataTypes.STRING(32),
-        allowNull: false,
-        unique: true
-    }
-}, {timestamps: false})
 
 const Employers = sequelize.define('employers', {
     id: {
@@ -72,12 +12,12 @@ const Employers = sequelize.define('employers', {
         unique: true,
 
     },
-    name: {
+    name_company: {
         type: DataTypes.STRING(128),
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING(64),
+        type: DataTypes.STRING(128),
         unique: true,
         allowNull: false,
     },
@@ -97,8 +37,11 @@ const Employers = sequelize.define('employers', {
     },
     short_name: {
         type: DataTypes.STRING(128)
+    },
+    about: {
+        type: DataTypes.STRING(3000)
     }
-}, {timestamps: false,})
+}, {timestamps: false})
 
 const Address = sequelize.define('address', {
     id: {
@@ -113,9 +56,32 @@ const Address = sequelize.define('address', {
     number_house: {
         type: DataTypes.INTEGER
     },
+    region: {
+        type: DataTypes.STRING(200)
+    },
+    region_type: {
+        type: DataTypes.STRING(30)
+    },
+    region_with_type: {
+        type: DataTypes.STRING(220)
+    },
+    street_with_type: {
+        type: DataTypes.STRING(300)
+    },
+    city: {
+        type: DataTypes.STRING(100)
+    },
+    index: {
+        type: DataTypes.INTEGER
+    },
+    country: {
+        type: DataTypes.STRING(100)
+    },
+
 
 }, {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false
 })
 
 const Applicants = sequelize.define('applicants', {
@@ -153,7 +119,13 @@ const Applicants = sequelize.define('applicants', {
     email: {
         type: DataTypes.STRING(64),
         unique: true,
+        allowNull: false,
     },
+    about: {
+        type: DataTypes.STRING(1000),
+    },
+}, {
+    timestamps: false
 })
 
 const Vacancies = sequelize.define('vacancies', {
@@ -168,14 +140,6 @@ const Vacancies = sequelize.define('vacancies', {
         type: DataTypes.STRING(64),
         allowNull: false,
     },
-    age_upper: {
-        type: DataTypes.INTEGER(),
-        allowNull: false,
-    },
-    age_lower: {
-        type: DataTypes.INTEGER(),
-        allowNull: false,
-    },
     payment_upper: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -184,28 +148,16 @@ const Vacancies = sequelize.define('vacancies', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    registration_work_book: {
+    is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
-    availability_social_package: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-    },
-    communication_skills: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-    },
-    start_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-    },
-    end_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-    },
+    experience: {
+        type: DataTypes.INTEGER,
+    }
 
-}, {timestamps: false})
+
+})
 
 const Genders = sequelize.define("genders", {
     id: {
@@ -223,7 +175,7 @@ const Genders = sequelize.define("genders", {
     timestamps: false
 })
 
-const Views = sequelize.define("views", {
+const Views_vacancies = sequelize.define("views_vacancies", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -231,11 +183,30 @@ const Views = sequelize.define("views", {
         allowNull: false,
         unique: true
     },
-    count_view: {
+        count_views: {
         type: DataTypes.INTEGER,
         allowNull: false,
     }
-})
+}, {
+        timestamps: false
+    }
+)
+const Views_resumes = sequelize.define("views_resumes", {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+            unique: true
+        },
+        count_views: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        }
+    }, {
+        timestamps: false
+    }
+)
 
 const Educations = sequelize.define("educations", {
     id: {
@@ -254,7 +225,7 @@ const Educations = sequelize.define("educations", {
     timestamps: false
 })
 
-const Kind_activities = sequelize.define("kind_activities", {
+const Resumes = sequelize.define('resumes', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -263,13 +234,37 @@ const Kind_activities = sequelize.define("kind_activities", {
         unique: true
     },
     name: {
+        type: DataTypes.STRING(64),
+        allowNull: false,
+    },
+    about: {
+        type: DataTypes.STRING(2000),
+        allowNull: false,
+    },
+
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    }
+})
+
+
+const Skills = sequelize.define("skills", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+    skill: {
         type: DataTypes.STRING(256),
         allowNull: false,
         unique: true
     }
 }, {timestamps: false})
 
-const Activities_vacancies = sequelize.define('activities_vacancies', {
+const Skills_vacancies = sequelize.define("skills_vacancies", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -278,9 +273,9 @@ const Activities_vacancies = sequelize.define('activities_vacancies', {
         unique: true
     },
 
-}, {timestamps: false});
+}, {timestamps: false})
 
-const Duties = sequelize.define("duties", {
+const Skills_resumes = sequelize.define("skills_resumes", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -288,65 +283,69 @@ const Duties = sequelize.define("duties", {
         allowNull: false,
         unique: true
     },
-    duties_volume: {
-        type: DataTypes.STRING(256),
+
+}, {timestamps: false})
+
+const Favourites_vacancies = sequelize.define("favourites_vacancies", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
         allowNull: false,
         unique: true
     }
 }, {timestamps: false})
 
-const Duties_vacancies = sequelize.define("duties_vacancies", {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true
-    },
 
-}, {timestamps: false})
+Address.belongsTo(Employers, {foreignKey: "user_id"})
+Employers.hasOne(Address, {foreignKey: "user_id"})
 
-
-Address.belongsTo(Employers, {foreignKey: "id"})
-Employers.hasOne(Address, {foreignKey: "id"})
+Address.belongsTo(Applicants, {foreignKey: "user_id"})
+Applicants.hasOne(Address, {foreignKey: "user_id"})
 
 Employers.hasMany(Vacancies, {foreignKey: "employer_id"})
 Vacancies.belongsTo(Employers, {foreignKey: "employer_id"})
 
-StreetsTypes.hasMany(Streets, {foreignKey: 'street_type'})
-Streets.belongsTo(StreetsTypes, {foreignKey: "street_type"})
-
-Streets.hasMany(Address, {foreignKey: 'street_id'})
-Address.belongsTo(Streets, {foreignKey: "street_id"})
-
-SettlementsTypes.hasMany(Settlements, {foreignKey: 'settlement_type'})
-
-Settlements.hasMany(Address, {foreignKey: 'settlement_id'})
-Address.belongsTo(Settlements, {foreignKey: "settlement_id"})
-
 Genders.hasMany(Vacancies, {foreignKey: "gender_id"})
 Vacancies.belongsTo(Genders, {foreignKey: "gender_id"})
+
+Genders.hasMany(Applicants, {foreignKey: "gender_id"})
+Applicants.belongsTo(Genders, {foreignKey: "gender_id"})
 
 Educations.hasMany(Vacancies, {foreignKey: "education_id"})
 Vacancies.belongsTo(Educations, {foreignKey: "education_id"})
 
-Applicants.hasMany(Views, {foreignKey: "applicant_id"})
-Views.belongsTo(Applicants, {foreignKey: "applicant_id"})
+Educations.hasMany(Applicants, {foreignKey: "education_id"})
+Applicants.belongsTo(Educations, {foreignKey: "education_id"})
 
-Vacancies.hasMany(Views, {foreignKey: "vacancy_id"})
-Views.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+Applicants.hasMany(Resumes, {foreignKey: "applicant_id"})
+Resumes.belongsTo(Applicants, {foreignKey: "applicant_id"})
 
-Kind_activities.hasMany(Activities_vacancies, {foreignKey: "activity_id"})
-Activities_vacancies.belongsTo(Kind_activities, {foreignKey: "activity_id"})
+Resumes.hasMany(Views_resumes, {foreignKey: "resume_id"})
+Views_resumes.belongsTo(Resumes, {foreignKey: "resume_id"})
 
-Vacancies.hasMany(Activities_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
-Activities_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+Vacancies.hasMany(Views_vacancies, {foreignKey: "vacancy_id"})
+Views_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
-Duties.hasMany(Duties_vacancies, {foreignKey: "duties_id"})
-Duties_vacancies.belongsTo(Duties, {foreignKey: "duties_id"})
+Skills.hasMany(Skills_vacancies, {foreignKey: "skill_id"})
+Skills_vacancies.belongsTo(Skills, {foreignKey: "skill_id"})
 
-Vacancies.hasMany(Duties_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
-Duties_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+Vacancies.hasMany(Skills_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
+Skills_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+
+Skills.hasMany(Skills_resumes, {foreignKey: "skill_id"})
+Skills_resumes.belongsTo(Skills, {foreignKey: "skill_id"})
+
+Resumes.hasMany(Skills_resumes, {foreignKey: "resume_id", onDelete: 'CASCADE'})
+Skills_resumes.belongsTo(Resumes, {foreignKey: "resume_id"})
+
+Applicants.hasMany(Favourites_vacancies, {foreignKey: "applicant_id", onDelete: 'CASCADE'})
+Favourites_vacancies.belongsTo(Applicants, {foreignKey: "applicant_id"})
+
+Vacancies.hasMany(Favourites_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
+Favourites_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+
+
 
 
 module.exports = {
@@ -354,15 +353,13 @@ module.exports = {
     Address,
     Applicants,
     Vacancies,
-    Streets,
-    StreetsTypes,
-    SettlementsTypes,
-    Settlements,
     Genders,
     Educations,
-    Views,
-    Kind_activities,
-    Duties,
-    Activities_vacancies,
-    Duties_vacancies
+    Views_vacancies,
+    Skills,
+    Skills_vacancies,
+    Skills_resumes,
+    Resumes,
+    Views_resumes,
+    Favourites_vacancies
 }

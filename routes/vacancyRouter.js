@@ -11,9 +11,6 @@ router.get('/item/:id', vacancyController.getItem)
 router.get('/post/:stroke', vacancyController.getPost)
 router.get('/post/', vacancyController.getPost)
 router.get('/delete/:id', vacancyController.deleteItem)
-router.get('/reportOne/', vacancyController.reportOne)
-router.get('/reportTwo/', vacancyController.reportTwo)
-router.get('/reportThree/', vacancyController.reportThree)
-    //router.get('/added/', vacancyController.added)
+
 
 module.exports = router
