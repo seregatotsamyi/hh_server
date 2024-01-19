@@ -1,6 +1,5 @@
 const sequelize = require('../config/db')
-const {DataTypes, NumberDataTypeOptions} = require('sequelize')
-
+const {DataTypes} = require('sequelize')
 
 
 const Employers = sequelize.define('employers', {
@@ -175,7 +174,7 @@ const Genders = sequelize.define("genders", {
     timestamps: false
 })
 
-const Views_vacancies = sequelize.define("views_vacancies", {
+const Specializations = sequelize.define("specializations", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -183,11 +182,87 @@ const Views_vacancies = sequelize.define("views_vacancies", {
         allowNull: false,
         unique: true
     },
-        count_views: {
-        type: DataTypes.INTEGER,
+    specialization: {
+        type: DataTypes.STRING(128),
         allowNull: false,
     }
 }, {
+    timestamps: false
+})
+
+const Specialization_resumes = sequelize.define("specialization_resumes", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+
+}, {timestamps: false})
+
+const Specialization_vacancies = sequelize.define("specialization_vacancies", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+
+}, {timestamps: false})
+
+const Schedules = sequelize.define("schedules", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+    schedule: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+    }
+}, {
+    timestamps: false
+})
+
+const Schedules_vacancies = sequelize.define("schedules_vacancies", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+
+}, {timestamps: false})
+
+const Schedules_resumes = sequelize.define("schedules_resumes", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+
+}, {timestamps: false})
+
+const Views_vacancies = sequelize.define("views_vacancies", {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+            unique: true
+        },
+        count_views: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        }
+    }, {
         timestamps: false
     }
 )
@@ -345,8 +420,29 @@ Favourites_vacancies.belongsTo(Applicants, {foreignKey: "applicant_id"})
 Vacancies.hasMany(Favourites_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
 Favourites_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
+Specializations.hasMany(Specialization_resumes, {foreignKey: "specialization_id"})
+Specialization_resumes.belongsTo(Specializations, {foreignKey: "specialization_id"})
 
+Specializations.hasMany(Specialization_vacancies, {foreignKey: "specialization_id"})
+Specialization_vacancies.belongsTo(Specializations, {foreignKey: "specialization_id"})
 
+Resumes.hasMany(Specialization_resumes, {foreignKey: "resume_id", onDelete: 'CASCADE'})
+Specialization_resumes.belongsTo(Resumes, {foreignKey: "resume_id"})
+
+Vacancies.hasMany(Specialization_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
+Specialization_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
+
+Schedules.hasMany(Schedules_resumes, {foreignKey: "schedules_id"})
+Schedules_resumes.belongsTo(Schedules, {foreignKey: "schedules_id"})
+
+Schedules.hasMany(Schedules_vacancies, {foreignKey: "schedules_id"})
+Schedules_vacancies.belongsTo(Schedules, {foreignKey: "schedules_id"})
+
+Resumes.hasMany(Schedules_resumes, {foreignKey: "resume_id", onDelete: 'CASCADE'})
+Schedules_resumes.belongsTo(Resumes, {foreignKey: "resume_id"})
+
+Vacancies.hasMany(Schedules_vacancies, {foreignKey: "vacancy_id", onDelete: 'CASCADE'})
+Schedules_vacancies.belongsTo(Vacancies, {foreignKey: "vacancy_id"})
 
 module.exports = {
     Employers,
@@ -361,5 +457,11 @@ module.exports = {
     Skills_resumes,
     Resumes,
     Views_resumes,
-    Favourites_vacancies
+    Favourites_vacancies,
+    Schedules_resumes,
+    Schedules_vacancies,
+    Schedules,
+    Specialization_resumes,
+    Specialization_vacancies,
+    Specializations
 }
