@@ -136,31 +136,31 @@ class VacancyController {
 
             try {
 
-                const {count, rows} = await Vacancies.findAndCountAll({
-                    include: [
-                        {
-                            model: Employers,
-                            attributes: ['name', 'id'],
-                            include: [
-                                {
-                                    model: Address,
-                                    attributes: ['id'],
-                                    include: [
-                                        {
-                                            model: Settlements,
-                                            attributes: ['settlement'],
-                                        }
-                                    ],
-                                }
-                            ],
-                        }
-                    ],
-                    where: {
-                        employer_id: id
-                    },
-                    offset: offsetNumber,
-                    limit: countPage
-                });
+                // const {count, rows} = await Vacancies.findAndCountAll({
+                //     include: [
+                //         {
+                //             model: Employers,
+                //             attributes: ['name', 'id'],
+                //             include: [
+                //                 {
+                //                     model: Address,
+                //                     attributes: ['id'],
+                //                     include: [
+                //                         {
+                //                             model: Settlements,
+                //                             attributes: ['settlement'],
+                //                         }
+                //                     ],
+                //                 }
+                //             ],
+                //         }
+                //     ],
+                //     where: {
+                //         employer_id: id
+                //     },
+                //     offset: offsetNumber,
+                //     limit: countPage
+                // });
 
                 let date = new Date()
                 const year = date.getFullYear()
@@ -191,28 +191,28 @@ class VacancyController {
         } else {
 
             try {
-                const {count, rows} = await Vacancies.findAndCountAll({
-                    include: [
-                        {
-                            model: Employers,
-                            attributes: ['name', 'id'],
-                            include: [
-                                {
-                                    model: Address,
-                                    attributes: ['id'],
-                                    include: [
-                                        {
-                                            model: Settlements,
-                                            attributes: ['settlement'],
-                                        }
-                                    ],
-                                }
-                            ],
-                        }
-                    ],
-                    offset: offsetNumber,
-                    limit: countPage
-                });
+                // const {count, rows} = await Vacancies.findAndCountAll({
+                //     include: [
+                //         {
+                //             model: Employers,
+                //             attributes: ['name', 'id'],
+                //             include: [
+                //                 {
+                //                     model: Address,
+                //                     attributes: ['id'],
+                //                     include: [
+                //                         {
+                //                             model: Settlements,
+                //                             attributes: ['settlement'],
+                //                         }
+                //                     ],
+                //                 }
+                //             ],
+                //         }
+                //     ],
+                //     offset: offsetNumber,
+                //     limit: countPage
+                // });
 
                 let date = new Date()
                 const year = date.getFullYear()

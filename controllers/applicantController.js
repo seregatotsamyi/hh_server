@@ -1,6 +1,6 @@
 const ApiError = require('../error/ApiError')
-const {Applicants} = require('../models/models')
-const {Op} = require("sequelize");
+const {Applicants, Address} = require('../models/models')
+const {Op} = require('sequelize');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -11,11 +11,15 @@ const generateJwt = (id, login, role) => {
 class ApplicantController {
 
     async login(req, res, next) {
+
         const {login, password, role} = req.body
+
         const applicant = await Applicants.findOne({where: {login}})
+
         if (!applicant) {
             return next(ApiError.internal("Пользователь с таким именем не найден"))
         }
+
         let comparePassword = bcrypt.compareSync(password, applicant.password)
 
         if (!comparePassword) {
@@ -23,26 +27,20 @@ class ApplicantController {
         }
 
         const token = generateJwt(applicant.id, applicant.login, role)
+
         return res.status(200).json({token})
     }
 
     async registration(req, res, next) {
-        let {login, first_name, second_name, surname, password, phone, email, role} = req.body
+
+        let {login, first_name, second_name, surname, password, phone, email, address} = req.body
 
         if (!login || !password) {
-            return next(ApiError.badRequest("Некорректный login или [password]"))
-        }
-        if (!email) {
-            email = null
+            return next(ApiError.badRequest("Некорректный login или password"))
         }
 
         const candidate = await Applicants.findOne({
-            where: {
-                [Op.or]: [
-                    {login},
-                    {phone}
-                ]
-            }
+            where: {login}
         })
 
         if (candidate) {
@@ -51,6 +49,18 @@ class ApplicantController {
 
         try {
             const hashPassword = await bcrypt.hash(password, 5)
+
+            const addressItem = await Address.create({
+                number_house: address.house,
+                region: address.region,
+                region_type: address.region_type,
+                region_with_type: address.region_with_type,
+                street_with_type: address.street_with_type,
+                city: address.city,
+                index: address.index,
+                country: address.country
+            })
+
             const applicant = await Applicants.create({
                 login,
                 first_name,
@@ -58,14 +68,20 @@ class ApplicantController {
                 surname,
                 password: hashPassword,
                 phone,
-                email
+                email,
+                address_id: addressItem.id
             })
-            const token = generateJwt(applicant.id, applicant.login, role)
+
+            const token = generateJwt(applicant.id, applicant.login, "applicants")
+
             return res.status(200).json({token})
+
         } catch (e) {
+
             if (e.name === "SequelizeUniqueConstraintError") {
                 return next(ApiError.badRequest(e))
             }
+            return next(ApiError.badRequest(e))
         }
     }
 
@@ -77,11 +93,12 @@ class ApplicantController {
     async get(req, res, next) {
         const {id} = req.params
         if (!id) {
-            return next(ApiError.badRequest("Не указан ID"))
+            return next(ApiError.badRequest('Не указан ID'))
         }
         try {
             const applicant = await Applicants.findOne({
-                where: {id}
+                where: {id},
+                attributes: ['id', 'first_name', 'second_name', 'surname', 'login', 'phone', 'email', 'about', 'gender_id', 'education_id']
             })
 
             res.json(applicant)

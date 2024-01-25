@@ -1,8 +1,11 @@
 const ApiError = require('../error/ApiError')
 
-module.exports = function (err, req, res) {
+module.exports = function (err, req, res, next) {
     if (err instanceof ApiError) {
-        return res.status(err.status).json({message: err.message})
+        //console.error(err.stack);
+        res.status(err.status).json({ message: err.message})
+        return next(err.message)
     }
-    return res.status(500).json({message: "Непредвиденная ошибка!"})
+    res.status(500).json({message: "Непредвиденная ошибка!"})
+    return next(err)
 }

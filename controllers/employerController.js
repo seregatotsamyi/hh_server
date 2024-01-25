@@ -11,11 +11,13 @@ const generateJwt = (id, login, role) => {
 
 class EmployerController {
     async registration(req, res, next) {
-        let {login, name, email, password, phone, settlements_id, street_id, number_house, role, short_name} = req.body
 
+        let {login, name_company, email, password, phone, short_name, address} = req.body
+        console.log(req.body)
         if (!login || !password) {
             return next(ApiError.badRequest("Некорректный login или [password]"))
         }
+
         if (!short_name) {
             short_name = null
         }
@@ -34,25 +36,34 @@ class EmployerController {
         }
 
         try {
+
             const hashPassword = await bcrypt.hash(password, 5)
+
+            const addressItem = await Address.create({
+                number_house: address.house,
+                region: address.region,
+                region_type: address.region_type,
+                region_with_type: address.region_with_type,
+                street_with_type: address.street_with_type,
+                city: address.city,
+                index: address.index,
+                country: address.country
+            })
 
             const employers = await Employers.create({
                 login,
-                name,
+                name_company,
                 password: hashPassword,
                 phone,
                 email,
                 short_name,
+                address_id: addressItem.id
             })
-            const address = await Address.create({
-                id: employers.id,
-                number_house,
-                settlement_id: settlements_id,
-                street_id
-            })
-            address.set(address)
-            const token = generateJwt(employers.id, employers.login, role)
+
+            const token = generateJwt(employers.id, employers.login, "employers")
+
             return res.status(200).json({token})
+
         } catch (e) {
             if (e.name === "SequelizeUniqueConstraintError") {
                 return next(ApiError.badRequest(e))
@@ -60,6 +71,7 @@ class EmployerController {
             if (e.name === "SequelizeDatabaseError") {
                 return next(ApiError.badRequest(e))
             }
+            return next(ApiError.badRequest(e))
             console.log(e)
         }
     }

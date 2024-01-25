@@ -47,10 +47,8 @@ const Address = sequelize.define('address', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         unique: true,
-        references: {
-            model: Employers,
-            key: 'id',
-        }
+        autoIncrement: true,
+        allowNull: false
     },
     number_house: {
         type: DataTypes.INTEGER
@@ -75,8 +73,7 @@ const Address = sequelize.define('address', {
     },
     country: {
         type: DataTypes.STRING(100)
-    },
-
+    }
 
 }, {
     freezeTableName: true,
@@ -372,11 +369,11 @@ const Favourites_vacancies = sequelize.define("favourites_vacancies", {
 }, {timestamps: false})
 
 
-Address.belongsTo(Employers, {foreignKey: "user_id"})
-Employers.hasOne(Address, {foreignKey: "user_id"})
+Address.hasOne(Employers, {foreignKey: "address_id"})
+Employers.belongsTo(Address, {foreignKey: "address_id"})
 
-Address.belongsTo(Applicants, {foreignKey: "user_id"})
-Applicants.hasOne(Address, {foreignKey: "user_id"})
+Address.hasOne(Applicants, {foreignKey: "address_id"})
+Applicants.belongsTo(Address, {foreignKey: "address_id"})
 
 Employers.hasMany(Vacancies, {foreignKey: "employer_id"})
 Vacancies.belongsTo(Employers, {foreignKey: "employer_id"})
