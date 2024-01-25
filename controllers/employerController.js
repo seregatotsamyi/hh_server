@@ -116,14 +116,14 @@ class EmployerController {
     }
 
     async update(req, res, next){
-        const {login, id, email, name, phone, short_name} = req.body
+        const {id, email, phone, short_name, about} = req.body
 
         if (!id){
             return next(ApiError.badRequest("Нет id"))
         }
 
         try {
-            await Employers.update({login, email, name, phone, short_name}, {
+            await Employers.update({ email, phone, short_name, about}, {
                 where: {
                     id
                 },

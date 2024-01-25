@@ -150,6 +150,9 @@ const Vacancies = sequelize.define('vacancies', {
     },
     experience: {
         type: DataTypes.INTEGER,
+    },
+    description: {
+        type: DataTypes.STRING(2048),
     }
 
 
